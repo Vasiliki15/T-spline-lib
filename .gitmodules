@@ -1,0 +1,3 @@
+[submodule "ext/T-SPLINE"]
+	path = ext/T-SPLINE
+	url = git@github.com:Vasiliki15/T-SPLINE.git
