@@ -2,6 +2,10 @@
 #define MESH_H
 
 #include <factory.h>
+#include <cross.h>
+#include <multiplicity.h>
+#include <tspline.h>
+#include <extractor.h>
 
 #ifdef use_namespace
 using namespace TSPLINE;
@@ -20,6 +24,8 @@ public:
 public:
 	/** Create the mouse surface. */
 	void createMesh();
+	/** Finds the local knot vectors */
+	void findLocalVecs();
 	/** Find the T-spline object. */
 	TSplinePtr findTSpline();
 	/** Find the T-group object. */
@@ -52,8 +58,12 @@ protected:
 	void patchTPoints();
 
 	void prepareTObjects();
+
+	void extractUVKnotsFromTNodeV4();
+
 private:
 	std::shared_ptr<TFactory> _factory;
+	std::shared_ptr<TExtractor> _textractor;
 };
 
 DECLARE_SMARTPTR(Mesh);

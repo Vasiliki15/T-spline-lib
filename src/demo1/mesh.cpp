@@ -6,6 +6,8 @@
 */
 
 #include "mesh.h"
+#include <iostream>
+#include <vector>
 
 #ifdef use_namespace
 using namespace TSPLINE;
@@ -13,10 +15,14 @@ using namespace TSPLINE;
 
 extern std::vector<std::string>& operator<<(std::vector<std::string> &container, const std::string &value);
 
+TNodeV4Ptr n0, n8, n14, n22;
+
 Mesh::Mesh()
 {
 	_factory = makePtr<TFactory>();
+	_textractor = makePtr<TExtractor>();
 	createMesh();
+	findLocalVecs();
 }
 
 void Mesh::createMesh()
@@ -46,6 +52,13 @@ void Mesh::createMesh()
 	patchTPoints();
 
 	prepareTObjects();
+
+
+}
+
+void Mesh::findLocalVecs(){
+
+	extractUVKnotsFromTNodeV4();
 }
 
 void Mesh::createTSpline()
@@ -248,7 +261,7 @@ void Mesh::createTFaces() // v
 
 void Mesh::createTNodes() // v
 {
-	_factory->createTNodeV4("n0"); // v
+	n0=_factory->createTNodeV4("n0"); // v
 	_factory->createTNodeV4("n1"); // v
 	_factory->createTNodeV4("n2"); // v
 	_factory->createTNodeV4("n3"); // v
@@ -256,13 +269,13 @@ void Mesh::createTNodes() // v
 	_factory->createTNodeV4("n5"); // v
 	_factory->createTNodeV4("n6"); // v
 	_factory->createTNodeV4("n7"); // v
-	_factory->createTNodeV4("n8"); // v
+	n8=_factory->createTNodeV4("n8"); // v
 	_factory->createTNodeV4("n9"); // v
 	_factory->createTNodeV4("n10"); // v
   _factory->createTNodeV4("n11"); // v
 	_factory->createTNodeV4("n12"); // v
 	_factory->createTNodeV4("n13"); // v
-	_factory->createTNodeV4("n14"); // v
+	n14=_factory->createTNodeV4("n14"); // v
 	_factory->createTNodeV4("n15"); // v
 	_factory->createTNodeV4("n16"); // v
 	_factory->createTNodeV4("n17"); // v
@@ -270,7 +283,7 @@ void Mesh::createTNodes() // v
 	_factory->createTNodeV4("n19"); // v
 	_factory->createTNodeV4("n20"); // v
 	_factory->createTNodeV4("n21"); // v
-	_factory->createTNodeV4("n22"); // v
+	n22=_factory->createTNodeV4("n22"); // v
 	_factory->createTNodeV4("n23"); // v
   _factory->createTNodeV4("n24"); // v
 }
@@ -631,4 +644,36 @@ TGroupPtr Mesh::findTGroup()
 void Mesh::findTFaceNames( std::vector<std::string> &faces )
 {
 	_factory->findTObjectNames(faces, TSPLINE::E_TFACE);
+}
+
+/* Call extractUVKnotsFromTNodeV4 from extractor.h to find the local u,v knots.
+Then prints them */
+
+void Mesh::extractUVKnotsFromTNodeV4()
+{
+	std::vector<Real> u_nodes[4];
+	std::vector<Real> u;
+	std::vector<Real> v_nodes[4];
+	std::vector<Real> v;
+	std::vector<TNodeV4Ptr> nodes_chosen{n0,n8,n14,n22};
+
+	for (unsigned int i = 0; i < nodes_chosen.size(); i++) {
+		_textractor->extractUVKnotsFromTNodeV4(nodes_chosen[i], u, v);
+		std::cout << "for node:" << i << '\n';
+		std::cout << "u knot is: " << '\n';
+		for (unsigned int j = 0; j < u.size(); j++) {
+			std::cout << u.at(j) << ' ';
+		}
+		std::cout << "" << '\n';
+		std::cout << "v knot is: " << '\n';
+		for (unsigned int j = 0; j < v.size(); j++) {
+			std::cout << v.at(j) << ' ';
+		}
+		std::cout << "" << '\n';
+		std::cout << "" << '\n';
+		u_nodes[i]=u;
+		v_nodes[i]=v;
+		u.clear();
+		v.clear();
+	}
 }
